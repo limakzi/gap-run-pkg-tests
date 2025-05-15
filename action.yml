@@ -51,6 +51,8 @@ runs:
         tags: ghcr.io/gap-system/gap:${{ inputs.gap-version }}-buildfull
         push: false
         load: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
         build-args: |
           IMAGE=ghcr.io/gap-system/gap:${{ inputs.gap-version }}-buildfull
 
