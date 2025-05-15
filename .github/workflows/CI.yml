@@ -37,7 +37,7 @@ jobs:
           - no-coverage: ''
             testfile: ''
             warn: false
-            pre-gap: 'time'
+            pre-gap: 'uname'
 
     steps:
       # the order of the checkout actions is important because all contents of
@@ -50,10 +50,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: this-action/
-      - uses: gap-actions/setup-gap@v2
-        with:
-          GAP_PKGS_TO_BUILD: ''
-      - uses: gap-actions/build-pkg@v1
       - uses: ./this-action/
         with:
           NO_COVERAGE: ${{ matrix.no-coverage }}

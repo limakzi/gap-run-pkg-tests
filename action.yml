@@ -1,6 +1,11 @@
 name: 'Run package tests'
 description: 'Run package tests'
 inputs:
+  gap-version:
+    description: 'Set a propoer gap-version, for example: 4.14.0'
+    required: false
+    type: string
+    default: '4.14.0'
   NO_COVERAGE:
     description: 'set to a non-empty string to suppress gathering coverage'
     required: false
@@ -31,15 +36,71 @@ inputs:
     required: false
     type: string
     default: ''
+
 env:
   CHERE_INVOKING: 1
 
 runs:
   using: "composite"
   steps:
-      - name: "Run tests"
+    - shell: bash
+      run: chmod -R 777 ${{ github.workspace }}
+
+    - uses: docker/setup-buildx-action@v2
+
+    - uses: docker/build-push-action@v3
+      with:
+        tags: ghcr.io/gap-system/gap:${{ inputs.gap-version }}-buildfull
+        push: false
+        load: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        build-args: |
+          IMAGE=ghcr.io/gap-system/gap:${{ inputs.gap-version }}-buildfull
+
+    - uses: addnab/docker-run-action@v3
+      with:
+        image: ghcr.io/gap-system/gap:${{ inputs.gap-version }}-buildfull
+        options: -v ${{ github.workspace }}:/gap -w /gap
+        shell: bash
         run: |
          set -ex
+
+         ln -sf /opt/gap/gap-${{ inputs.gap-version}}/ /opt/gap/gap
+
+         GAPROOT=${GAPROOT-$HOME/gap}
+
+         # ensure coverage is turned on
+         if [[ -z $NO_COVERAGE ]]; then
+             export CFLAGS="$CFLAGS --coverage"
+             export CXXFLAGS="$CXXFLAGS --coverage"
+             export LDFLAGS="$LDFLAGS --coverage"
+         fi
+
+         # adjust build flags for 32bit builds
+         if [[ "${{ inputs.ABI }}" = 32 ]]; then
+             export CFLAGS="$CFLAGS -m32"
+             export CXXFLAGS="$CXXFLAGS -m32"
+             export LDFLAGS="$LDFLAGS -m32"
+         fi
+
+         # build this package, if necessary
+         if [[ -x prerequisites.sh ]]; then
+             ./prerequisites.sh $GAPROOT
+         fi
+         if [[ -x autogen.sh ]]; then
+             ./autogen.sh
+         fi
+
+
+         if grep Autoconf ./configure > /dev/null
+         then
+             ./configure --with-gaproot=$GAPROOT ${{ inputs.CONFIGFLAGS }}
+             make -j4 V=1
+         elif [[ -x configure ]]; then
+             ./configure ${{ inputs.CONFIGFLAGS }} $GAPROOT
+             make -j4 CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS"
+         fi
 
          GAPROOT=${GAPROOT-$HOME/gap}
 
@@ -120,4 +181,3 @@ runs:
          EOF
          $GAP __TEST_RUNNNER__.g
 
-        shell: bash
