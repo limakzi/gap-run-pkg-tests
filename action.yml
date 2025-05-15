@@ -55,8 +55,8 @@ runs:
         load: true
         cache-from: type=gha
         cache-to: type=gha,mode=max
-        build-args:
-          image: ghcr.io/gap-system/gap:${{ inputs.gap-version }}-buildfull
+        build-args: |
+          IMAGE=ghcr.io/gap-system/gap:${{ inputs.gap-version }}-buildfull
 
     - uses: addnab/docker-run-action@v3
       with:
