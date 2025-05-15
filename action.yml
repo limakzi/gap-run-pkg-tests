@@ -46,8 +46,7 @@ runs:
     - uses: addnab/docker-run-action@v3
       with:
         image: ghcr.io/gap-system/gap:${{ inputs.gap-version }}-full
-        options:
-          - -v ${{ github.workspace }}:/:rw
+        options: -v ${{ github.workspace }}:./
         shell: bash
         run: |
          set -ex
