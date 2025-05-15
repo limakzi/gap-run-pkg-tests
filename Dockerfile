@@ -1,1 +1,2 @@
-FROM alpine
+ARG IMAGE
+FROM $IMAGE

@@ -52,10 +52,11 @@ runs:
       with:
         tags: ghcr.io/gap-system/gap:${{ inputs.gap-version }}-buildfull
         push: false
-        pull: true
         load: true
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build_args:
+          image: ghcr.io/gap-system/gap:${{ inputs.gap-version }}-buildfull
 
     - uses: addnab/docker-run-action@v3
       with:
