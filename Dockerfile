@@ -1,1 +1,1 @@
-## emptyn
+FROM alpine
