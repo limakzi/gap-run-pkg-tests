@@ -43,10 +43,12 @@ env:
 runs:
   using: "composite"
   steps:
+    - run: chmod -R 777 ${{ github.workspace }}
+
     - uses: addnab/docker-run-action@v3
       with:
         image: ghcr.io/gap-system/gap:${{ inputs.gap-version }}-full
-        options: -v ${{ github.workspace }}:/gap -w /gap
+        options: --user=root -v ${{ github.workspace }}:/gap -w /gap
         shell: bash
         run: |
          set -ex
@@ -77,10 +79,6 @@ runs:
              ./autogen.sh
          fi
 
-         echo "---"
-         echo $(id)
-         ls -la $PWD
-         echo "---"
 
          if grep Autoconf ./configure > /dev/null
          then
