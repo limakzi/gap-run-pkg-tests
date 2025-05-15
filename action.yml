@@ -51,6 +51,8 @@ runs:
         run: |
          set -ex
 
+         ln -sf /opt/gap/gap-${{ inputs.gap-version}}/ /opt/gap/gap
+
          GAPROOT=${GAPROOT-$HOME/gap}
 
          # ensure coverage is turned on
