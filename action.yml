@@ -43,7 +43,8 @@ env:
 runs:
   using: "composite"
   steps:
-    - run: chmod -R 777 ${{ github.workspace }}
+    - shell: bash
+      run: chmod -R 777 ${{ github.workspace }}
 
     - uses: addnab/docker-run-action@v3
       with:
