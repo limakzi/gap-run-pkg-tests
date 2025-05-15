@@ -41,10 +41,11 @@ env:
   CHERE_INVOKING: 1
 
 runs:
-  using: "docker"
-  image: docker pull ghcr.io/gap-system/gap:${{ inputs.gap-version }}-full
+  using: "composite"
   steps:
-      - name: "Run tests"
+    - uses: addnab/docker-run-action@v3
+      with:
+        image: ghcr.io/gap-system/gap:${{ inputs.gap-version }}-full
         shell: bash
         run: |
          set -ex
