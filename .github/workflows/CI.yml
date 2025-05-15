@@ -50,9 +50,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: this-action/
-      - uses: gap-actions/setup-gap@v2
-        with:
-          GAP_PKGS_TO_BUILD: ''
       - uses: gap-actions/build-pkg@v1
       - uses: ./this-action/
         with:
