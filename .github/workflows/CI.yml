@@ -37,7 +37,7 @@ jobs:
           - no-coverage: ''
             testfile: ''
             warn: false
-            pre-gap: 'time'
+            pre-gap: 'uname'
 
     steps:
       # the order of the checkout actions is important because all contents of
