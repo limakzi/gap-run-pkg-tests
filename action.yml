@@ -76,6 +76,8 @@ runs:
          if [[ -x autogen.sh ]]; then
              ./autogen.sh
          fi
+
+         echo $PWD
          if grep Autoconf ./configure > /dev/null
          then
              ./configure --with-gaproot=$GAPROOT ${{ inputs.CONFIGFLAGS }}
